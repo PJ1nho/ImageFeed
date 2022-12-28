@@ -13,6 +13,7 @@
 		E995454F294F4E9A00072B64 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E995454D294F4E9A00072B64 /* Main.storyboard */; };
 		E9954551294F4E9C00072B64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9954550294F4E9C00072B64 /* Assets.xcassets */; };
 		E9954554294F4E9C00072B64 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E9954552294F4E9C00072B64 /* LaunchScreen.storyboard */; };
+		E9CF3411295CCBEE00AB8F20 /* YandexSansDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9CF3410295CCBED00AB8F20 /* YandexSansDisplay-Regular.ttf */; };
 		E9FDF2D42955267C00BEFDAE /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FDF2D32955267C00BEFDAE /* ImagesListCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		E9954550294F4E9C00072B64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9954553294F4E9C00072B64 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E9954555294F4E9C00072B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9CF3410295CCBED00AB8F20 /* YandexSansDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YandexSansDisplay-Regular.ttf"; sourceTree = "<group>"; };
 		E9FDF2D32955267C00BEFDAE /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +67,7 @@
 				E9954550294F4E9C00072B64 /* Assets.xcassets */,
 				E9954552294F4E9C00072B64 /* LaunchScreen.storyboard */,
 				E9954555294F4E9C00072B64 /* Info.plist */,
+				E9CF3410295CCBED00AB8F20 /* YandexSansDisplay-Regular.ttf */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
@@ -136,6 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9CF3411295CCBEE00AB8F20 /* YandexSansDisplay-Regular.ttf in Resources */,
 				E9954554294F4E9C00072B64 /* LaunchScreen.storyboard in Resources */,
 				E9954551294F4E9C00072B64 /* Assets.xcassets in Resources */,
 				E995454F294F4E9A00072B64 /* Main.storyboard in Resources */,
