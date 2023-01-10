@@ -9,6 +9,7 @@ import UIKit
 
 class ImagesListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
+    private let showSingleImageSegueIdentifier = "ShowSingleImage"
     
     private let photoNames: [String] = Array(0..<20).map{ "\($0)" }
     private lazy var dateFormatter: DateFormatter = {
@@ -37,11 +38,22 @@ class ImagesListViewController: UIViewController {
             cell.likeButton.imageView?.image = UIImage(named: "likeInactive")
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showSingleImageSegueIdentifier {
+            let viewController = segue.destination as! SingleImageViewController
+            let indexPath = sender as! IndexPath
+            let image = UIImage(named: photoNames[indexPath.row])
+            viewController.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
 }
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
     }
 }
 
