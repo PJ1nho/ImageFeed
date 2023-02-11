@@ -12,8 +12,6 @@ final class WebViewViewController: UIViewController {
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
     weak var delegate: WebViewViewControllerDelegate?
-    private let authService = OAuth2Service()
-    private let oAuth2TokenStorage = OAuth2TokenStorage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,10 +31,6 @@ final class WebViewViewController: UIViewController {
         
         updateProgress()
     }
-
-    @IBAction private func didTapBackButton(_ sender: Any) {
-        delegate?.webViewViewControllerDidCancel(self)
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -55,6 +49,10 @@ final class WebViewViewController: UIViewController {
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
             context: nil)
         updateProgress()
+    }
+
+    @IBAction private func didTapBackButton(_ sender: Any) {
+        delegate?.webViewViewControllerDidCancel(self)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -79,20 +77,6 @@ extension WebViewViewController: WKNavigationDelegate {
     ) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-            authService.fetchAutoToken(code: code) { [weak self] result in
-                switch result {
-                case .success(let token):
-                    print("/n MYLOG: \(token)")
-                    self?.oAuth2TokenStorage.token = token
-                    DispatchQueue.main.async {
-                        let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageListViewController") as! ImagesListViewController
-                        vc.modalPresentationStyle = .fullScreen
-                        self?.present(vc, animated: true)
-                    }
-                case .failure(let error):
-                    print("/n MYLOG: \(error)")
-                }
-            }
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
