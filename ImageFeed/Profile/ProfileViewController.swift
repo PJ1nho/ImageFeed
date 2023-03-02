@@ -6,10 +6,31 @@ final class ProfileViewController: UIViewController {
     let nameLabel = UILabel()
     let tagName = UILabel()
     let userInformation = UILabel()
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        updateProfileDetails()
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(forName: ProfileImageService.DidChangeNotification,
+                         object: nil,
+                         queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        
     }
     
     private func setupUI() {
@@ -79,5 +100,11 @@ final class ProfileViewController: UIViewController {
             userInformation.topAnchor.constraint(equalTo: tagName.bottomAnchor, constant: 8),
             userInformation.leadingAnchor.constraint(equalTo: tagName.leadingAnchor)
         ])
+    }
+    
+    private func updateProfileDetails() {
+        nameLabel.text = profileService.profile?.name
+        tagName.text = profileService.profile?.loginName
+        userInformation.text = profileService.profile?.bio
     }
 }

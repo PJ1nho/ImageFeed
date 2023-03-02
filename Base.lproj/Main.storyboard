@@ -333,10 +333,10 @@
             </objects>
             <point key="canvasLocation" x="638" y="-836"/>
         </scene>
-        <!--Splash Screen View Controller-->
+        <!--Splash View Controller-->
         <scene sceneID="rwy-ag-s5I">
             <objects>
-                <viewController id="5vV-Jg-y6H" customClass="SplashScreenViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="5vV-Jg-y6H" customClass="SplashViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="GCX-lZ-T7l">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -7,11 +7,13 @@
 
 import UIKit
 
-final class SplashScreenViewController: UIViewController {
+final class SplashViewController: UIViewController {
     
     private let oAuth2TokenStorage = OAuth2TokenStorage()
     private let authService = OAuth2Service()
     private let splashSegueIdentifier = "ShowAuthVCSegue"
+    private let profileService = ProfileService.shared
+    let token = OAuth2TokenStorage().token
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -21,7 +23,7 @@ final class SplashScreenViewController: UIViewController {
     
     private func checkToken(token: String) {
         if !token.isEmpty {
-            switchTabBar()
+            fetchProfile(token: token)
         } else {
             performSegue(withIdentifier: splashSegueIdentifier, sender: self)
         }
@@ -44,12 +46,38 @@ final class SplashScreenViewController: UIViewController {
         }
     }
     
+    func fetchProfile(token: String) {
+        profileService.fetchProfile(token) { [weak self] result in
+            switch result {
+            case .success(let profile):
+                print("/n MYLOG: \(profile)")
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.loginName.replacingOccurrences(of: "@", with: "")) { _ in }
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.switchTabBar()
+                }
+            case .failure(let error):
+                print("/n MYLOG: \(error)")
+                self?.showAlert()
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
+            }
+        }
+    }
+    
+    func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 // MARK: - AuthViewControllerDelegate
-extension SplashScreenViewController: AuthViewControllerDelegate {
+extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        authService.fetchAutoToken(code: code) { [weak self] result in
+        UIBlockingProgressHUD.show()
+        authService.fetchAuthToken(code: code) { [weak self] result in
             switch result {
             case .success(let token):
                 print("/n MYLOG: \(token)")
@@ -57,8 +85,13 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                     self?.oAuth2TokenStorage.token = token
                     self?.switchTabBar()
                 }
+                self?.fetchProfile(token: token)
             case .failure(let error):
                 print("/n MYLOG: \(error)")
+                self?.showAlert()
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
             }
         }
     }
