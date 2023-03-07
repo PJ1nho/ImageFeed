@@ -49,32 +49,6 @@ final class OAuth2Service {
                 self?.task = nil
                 }
             }
-            
-            //        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            //            if let error = error {
-            //                completion(.failure(error))
-            //                return
-            //            }
-            //            guard let data = data,
-            //                  let response = response as? HTTPURLResponse,
-            //                  (200 ..< 299).contains(response.statusCode) else {
-            //                print("Error: HTTP request failed")
-            //                return
-            //            }
-            //            let responseToken = try? JSONDecoder().decode(OAuthResponseBody.self, from: data)
-            //            guard let responseToken = responseToken else {
-            //                return
-            //            }
-            //            let token = responseToken.accessToken
-            //            completion(.success(token))
-            //
-            //            UIBlockingProgressHUD.dismiss()
-            //
-            //            self.task = nil
-            //            if error != nil {
-            //                self.lastCode = nil
-            //            }
-            //        }
             self.task = task
             task.resume()
         }

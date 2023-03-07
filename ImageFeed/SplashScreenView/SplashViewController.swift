@@ -31,7 +31,6 @@ final class SplashViewController: UIViewController {
         if !token.isEmpty {
             fetchProfile(token: token)
         } else {
-//            performSegue(withIdentifier: splashSegueIdentifier, sender: self)
             guard let authViewController = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else { return }
             authViewController.delegate = self
             authViewController.modalPresentationStyle = .fullScreen
@@ -47,14 +46,6 @@ final class SplashViewController: UIViewController {
         }
         window.rootViewController = tabBarVC
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == splashSegueIdentifier,
-//           let navVC = segue.destination as? UINavigationController,
-//           let vc = navVC.viewControllers.first as? AuthViewController {
-//            vc.delegate = self
-//        }
-//    }
     
     func fetchProfile(token: String) {
         profileService.fetchProfile(token) { [weak self] result in
