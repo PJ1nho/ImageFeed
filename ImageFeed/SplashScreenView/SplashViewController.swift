@@ -14,7 +14,6 @@ final class SplashViewController: UIViewController {
     private let authService = OAuth2Service()
     private let splashSegueIdentifier = "ShowAuthVCSegue"
     private let profileService = ProfileService.shared
-    let authViewController = AuthViewController()
     let token = OAuth2TokenStorage().token
     
     override func viewDidLoad() {
@@ -33,6 +32,7 @@ final class SplashViewController: UIViewController {
             fetchProfile(token: token)
         } else {
 //            performSegue(withIdentifier: splashSegueIdentifier, sender: self)
+            guard let authViewController = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else { return }
             authViewController.delegate = self
             authViewController.modalPresentationStyle = .fullScreen
             present(authViewController, animated: true)
