@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -30,10 +31,13 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        
+        let processor = RoundCornerImageProcessor(cornerRadius: 50)
+        self.profileImageView.kf.setImage(with: url,
+                                          options: [.processor(processor)])
     }
     
     private func setupUI() {
+        self.view.backgroundColor = UIColor(red: 26/255.0, green: 27/255.0, blue: 34/255.0, alpha: 1)
         configureImageView()
         configureNameLabel()
         configureTagName()

@@ -9,11 +9,18 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
+    private let mainImageView = UIImageView()
     private let oAuth2TokenStorage = OAuth2TokenStorage()
     private let authService = OAuth2Service()
     private let splashSegueIdentifier = "ShowAuthVCSegue"
     private let profileService = ProfileService.shared
+    let authViewController = AuthViewController()
     let token = OAuth2TokenStorage().token
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -25,7 +32,10 @@ final class SplashViewController: UIViewController {
         if !token.isEmpty {
             fetchProfile(token: token)
         } else {
-            performSegue(withIdentifier: splashSegueIdentifier, sender: self)
+//            performSegue(withIdentifier: splashSegueIdentifier, sender: self)
+            authViewController.delegate = self
+            authViewController.modalPresentationStyle = .fullScreen
+            present(authViewController, animated: true)
         }
     }
     
@@ -38,13 +48,13 @@ final class SplashViewController: UIViewController {
         window.rootViewController = tabBarVC
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == splashSegueIdentifier,
-           let navVC = segue.destination as? UINavigationController,
-           let vc = navVC.viewControllers.first as? AuthViewController {
-            vc.delegate = self
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == splashSegueIdentifier,
+//           let navVC = segue.destination as? UINavigationController,
+//           let vc = navVC.viewControllers.first as? AuthViewController {
+//            vc.delegate = self
+//        }
+//    }
     
     func fetchProfile(token: String) {
         profileService.fetchProfile(token) { [weak self] result in
@@ -71,6 +81,25 @@ final class SplashViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
+    
+    private func configureMainImageView() {
+        mainImageView.image = UIImage(named: "Vector")
+        mainImageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(mainImageView)
+    }
+    
+    private func configureConstraints() {
+        NSLayoutConstraint.activate([
+            mainImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            mainImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func setupUI() {
+        self.view.backgroundColor = UIColor(red: 26/255.0, green: 27/255.0, blue: 34/255.0, alpha: 1)
+        configureMainImageView()
+        configureConstraints()
+    }
 }
 
 // MARK: - AuthViewControllerDelegate
@@ -95,4 +124,5 @@ extension SplashViewController: AuthViewControllerDelegate {
             }
         }
     }
+    
 }
