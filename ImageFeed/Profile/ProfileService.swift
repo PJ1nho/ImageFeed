@@ -26,7 +26,9 @@ final class ProfileService {
             return
         }
         
-        UIBlockingProgressHUD.show()
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -53,7 +55,9 @@ final class ProfileService {
                 
                 self?.profile = profile
                 
-                UIBlockingProgressHUD.dismiss()
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
                 
                 self?.task = nil
                 self?.lastToken = nil

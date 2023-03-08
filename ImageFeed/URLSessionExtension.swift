@@ -37,7 +37,9 @@ extension URLSession {
             
             completion(.success(responseData))
             
-            UIBlockingProgressHUD.dismiss()
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.dismiss()
+            }
         })
         return task
     }
