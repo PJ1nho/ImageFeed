@@ -59,8 +59,8 @@ final class SplashViewController: UIViewController {
                 }
             case .failure(let error):
                 print("/n MYLOG: \(error)")
-                self?.showAlert()
                 DispatchQueue.main.async {
+                    self?.showAlert()
                     UIBlockingProgressHUD.dismiss()
                 }
             }
@@ -96,7 +96,9 @@ final class SplashViewController: UIViewController {
 // MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        UIBlockingProgressHUD.show()
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
         authService.fetchAuthToken(code: code) { [weak self] result in
             switch result {
             case .success(let token):

@@ -28,7 +28,9 @@ final class OAuth2Service {
             return
         }
         
-        UIBlockingProgressHUD.show()
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -44,8 +46,10 @@ final class OAuth2Service {
                 let token = data.accessToken
                 completion(.success(token))
                 
-                UIBlockingProgressHUD.dismiss()
-                
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
+        
                 self?.task = nil
                 }
             }

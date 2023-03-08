@@ -29,7 +29,9 @@ final class ProfileImageService {
             return
         }
         
-        UIBlockingProgressHUD.show()
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -48,7 +50,9 @@ final class ProfileImageService {
                         object: self,
                         userInfo: ["URL": data.small])
                 
-                UIBlockingProgressHUD.dismiss()
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
                 
                 self?.task = nil
                 self?.lastUsername = nil
