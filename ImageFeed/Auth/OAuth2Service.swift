@@ -1,7 +1,16 @@
 import UIKit
 
-class OAuth2Service {
-    func fetchAutoToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+final class OAuth2Service {
+    
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
+    func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        
+        if lastCode == code { return }
+        task?.cancel()
+        lastCode = code
+        
         guard let url = URL(string: "https://unsplash.com/oauth/token") else {
             print("Error: cannot create URL")
             return
@@ -14,10 +23,13 @@ class OAuth2Service {
             code: code,
             grantType: "authorization_code")
         
-        
         guard let jsonData = try? JSONEncoder().encode(requestData) else {
             print("Error: Trying to convert model to JSON data")
             return
+        }
+        
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
         }
         
         var request = URLRequest(url: url)
@@ -25,24 +37,23 @@ class OAuth2Service {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.httpBody = jsonData
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
+        
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<OAuthResponseBody, Error>) in
+            switch result {
+            case .failure(let error):
                 completion(.failure(error))
-                return
+            case .success(let data):
+                let token = data.accessToken
+                completion(.success(token))
+                
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
+        
+                self?.task = nil
+                }
             }
-            
-            guard let data = data,
-                  let response = response as? HTTPURLResponse,
-                  (200 ..< 299).contains(response.statusCode) else {
-                print("Error: HTTP request failed")
-                return
-            }
-            let responseToken = try? JSONDecoder().decode(OAuthResponseBody.self, from: data)
-            guard let responseToken = responseToken else {
-                return
-            }
-            let token = responseToken.accessToken
-            completion(.success(token))
-        }.resume()
+            self.task = task
+            task.resume()
+        }
     }
-}

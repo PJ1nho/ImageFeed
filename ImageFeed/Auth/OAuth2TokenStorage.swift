@@ -1,18 +1,19 @@
 import UIKit
+import SwiftKeychainWrapper
 
 protocol OAuth2TokenStorageProtocol {
     var token: String { get }
 }
 
 class OAuth2TokenStorage: OAuth2TokenStorageProtocol {
-    private let userDefaults = UserDefaults.standard
+    private let keyChain = KeychainWrapper.standard
     
     var token: String {
         get {
-            return userDefaults.string(forKey: Keys.token.rawValue) ?? ""
+            return keyChain.string(forKey: Keys.token.rawValue) ?? ""
         }
         set {
-            userDefaults.set(newValue, forKey: Keys.token.rawValue)
+            keyChain.set(newValue, forKey: Keys.token.rawValue)
         }
     }
     
