@@ -7,8 +7,6 @@
 
 import UIKit
 
-
-
 protocol WebViewPresenterProtocol: AnyObject {
     var view: WebViewViewControllerProtocol? {get set}
     func viewDidLoad()
