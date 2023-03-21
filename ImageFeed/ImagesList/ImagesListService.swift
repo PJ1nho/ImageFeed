@@ -54,7 +54,7 @@ final class ImagesListService {
         task.resume()
     }
     
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like?client_id=\(AccessKey)") else {
             print("Error: cannot create URL")
             return }
@@ -66,7 +66,6 @@ final class ImagesListService {
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     completion(.failure(error))
-                    return
                 }
                 guard let response = response as? HTTPURLResponse,
                       (200...299).contains(response.statusCode) else {
@@ -75,6 +74,7 @@ final class ImagesListService {
                 }
                 if let data = data {
                     print("Response: \(String(data: data, encoding: .utf8) ?? "")")
+                    completion(.success(true))
                 }
             }.resume()
         } else {
@@ -83,7 +83,6 @@ final class ImagesListService {
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     completion(.failure(error))
-                    return
                 }
                 guard let response = response as? HTTPURLResponse,
                       (200...299).contains(response.statusCode) else {
@@ -92,6 +91,7 @@ final class ImagesListService {
                 }
                 if let data = data {
                     print("Response: \(String(data: data, encoding: .utf8) ?? "")")
+                    completion(.success(false))
                 }
             }.resume()
         }
