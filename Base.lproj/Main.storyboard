@@ -134,6 +134,9 @@
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" title="" image="likeInactive"/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked:" destination="TAv-8l-b2a" eventType="touchUpInside" id="2G4-xy-ul6"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -174,6 +177,7 @@
                     <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="3Ic-e3-gxd"/>
                     <navigationItem key="navigationItem" id="Iei-vZ-tW6"/>
                     <connections>
+                        <outlet property="tableView" destination="TW1-es-b1t" id="DhR-GD-DeB"/>
                         <segue destination="Uig-yg-TV3" kind="presentation" identifier="ShowSingleImage" id="KW9-8Y-1i6"/>
                     </connections>
                 </viewController>

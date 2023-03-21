@@ -7,6 +7,7 @@ final class ProfileViewController: UIViewController {
     let nameLabel = UILabel()
     let tagName = UILabel()
     let userInformation = UILabel()
+    var logOutButton = UIButton()
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
@@ -77,7 +78,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func configureLogOutButton() {
-        let logOutButton = UIButton.systemButton(with: UIImage(named: "logOutButton")!, target: self, action: .none)
+        logOutButton = UIButton.systemButton(with: UIImage(named: "logOutButton")!, target: self, action: .none)
         logOutButton.tintColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logOutButton)
@@ -86,6 +87,8 @@ final class ProfileViewController: UIViewController {
             logOutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -26),
             logOutButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor)
         ])
+        
+        logOutButton.addTarget(self, action: #selector(self.logOutClicked), for: .touchUpInside)
     }
     
     private func configureConstraints() {
@@ -110,5 +113,25 @@ final class ProfileViewController: UIViewController {
         nameLabel.text = profileService.profile?.name
         tagName.text = profileService.profile?.loginName
         userInformation.text = profileService.profile?.bio
+    }
+    
+    @objc func logOutClicked() {
+        showLogOutAlert()
+    }
+    
+    private func showLogOutAlert() {
+        let alert = UIAlertController(title: "Пока-пока", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Да", style: .default, handler: { _ in
+            OAuth2TokenStorage().clearToken()
+            WebViewViewController.clear()
+            let splashViewController = SplashViewController()
+            splashViewController.modalPresentationStyle = .fullScreen
+            self.present(splashViewController, animated: true)
+            return
+        }))
+        alert.addAction(UIAlertAction(title: "Нет", style: .default, handler: { _ in
+            return
+        }))
+        self.present(alert, animated: true)
     }
 }
