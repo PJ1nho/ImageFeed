@@ -135,7 +135,7 @@
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" title="" image="likeInactive"/>
                                                     <connections>
-                                                        <action selector="likeButtonClicked:" destination="TAv-8l-b2a" eventType="touchUpInside" id="2G4-xy-ul6"/>
+                                                        <action selector="likeButtonClicked" destination="TAv-8l-b2a" eventType="touchUpInside" id="GBZ-Bb-Nve"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -183,7 +183,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-283" y="-50"/>
+            <point key="canvasLocation" x="-284.05797101449275" y="-50.223214285714285"/>
         </scene>
         <!--Single Image View Controller-->
         <scene sceneID="ybR-2m-9UN">

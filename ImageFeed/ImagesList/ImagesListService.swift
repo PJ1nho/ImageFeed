@@ -60,8 +60,9 @@ final class ImagesListService {
             return }
         var request = URLRequest(url: url)
         
-        if isLike == false {
+        if isLike == true {
             request.httpMethod = "POST"
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     completion(.failure(error))
@@ -78,6 +79,7 @@ final class ImagesListService {
             }.resume()
         } else {
             request.httpMethod = "DELETE"
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     completion(.failure(error))

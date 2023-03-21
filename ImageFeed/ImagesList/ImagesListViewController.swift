@@ -19,6 +19,7 @@ class ImagesListViewController: UIViewController {
     private var photos = [Photo]()
     private var imagesListObserver: NSObjectProtocol?
     private var selectedImage: UIImage?
+    private var selectedIndexPath: IndexPath?
     weak var delegate: ImagesListCellDelegate?
     
     private lazy var dateFormatter: DateFormatter = {
@@ -65,11 +66,11 @@ class ImagesListViewController: UIViewController {
         cell.cellImage.kf.setImage(with: URL(string: thumbURL),
                                    placeholder: UIImage(named: "loadingScreen"))
         cell.dateLabel.text = dateFormatter.string(from: Date())
-        if indexPath.row % 2 == 0 {
-            cell.likeButton.imageView?.image = UIImage(named: "likeActive")
-        } else {
-            cell.likeButton.imageView?.image = UIImage(named: "likeInactive")
-        }
+//        if indexPath.row % 2 == 0 {
+//            cell.likeButton.imageView?.image = UIImage(named: "likeActive")
+//        } else {
+//            cell.likeButton.imageView?.image = UIImage(named: "likeInactive")
+//        }
     }
     
     //MARK: - Functions
@@ -94,12 +95,13 @@ class ImagesListViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    
-    // MARK: !!!!!!!
     func showError() {
         let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?" , preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Не надо", style: .default))
-        alert.addAction(UIAlertAction(title: "Повторить", style: .default))
+        alert.addAction(UIAlertAction(title: "Повторить", style: .default, handler: { _ in
+            guard let selectedIndexPath = self.selectedIndexPath else { return }
+            self.tableView.delegate?.tableView?(self.tableView, didSelectRowAt: selectedIndexPath)
+        }))
     }
 }
 
@@ -108,6 +110,7 @@ class ImagesListViewController: UIViewController {
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let photoURL = URL(string: photos[indexPath.row].largeImageURL) else { return }
+        self.selectedIndexPath = indexPath
         UIBlockingProgressHUD.show()
         KingfisherManager.shared.retrieveImage(with: photoURL, options: nil, progressBlock: nil, completionHandler: { result in
             UIBlockingProgressHUD.dismiss()
@@ -132,10 +135,10 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-//        cell.delegate = self
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
+        imageListCell.delegate = self
         self.imageListCell = imageListCell
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
@@ -166,9 +169,10 @@ extension ImagesListViewController: ImagesListCellDelegate {
         DispatchQueue.main.async {
             UIBlockingProgressHUD.show()
         }
-        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { result in
+        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
             switch result {
             case .success:
+                guard let self = self else { return }
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(self.photos[indexPath.row].isLiked)
                 DispatchQueue.main.async {
@@ -177,7 +181,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .failure:
                 DispatchQueue.main.async {
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlert()
+                    self?.showAlert()
                 }
             }
         }
