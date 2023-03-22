@@ -89,6 +89,7 @@ final class ProfileViewController: UIViewController {
         ])
         
         logOutButton.addTarget(self, action: #selector(self.logOutClicked), for: .touchUpInside)
+        logOutButton.restorationIdentifier = "logoutButton"
     }
     
     private func configureConstraints() {
