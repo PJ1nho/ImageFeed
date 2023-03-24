@@ -69,7 +69,9 @@ extension WebViewViewController: WKNavigationDelegate {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
-            ProgressHUD.show()
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.show()
+            }
         } else {
             decisionHandler(.allow)
         }

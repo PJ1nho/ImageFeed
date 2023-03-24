@@ -21,13 +21,7 @@ class ImagesListViewController: UIViewController {
     private var selectedImage: UIImage?
     private var selectedIndexPath: IndexPath?
     weak var delegate: ImagesListCellDelegate?
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
+
     private let imagesListService = ImagesListService()
     
     //MARK: - LifeCycle
@@ -61,16 +55,16 @@ class ImagesListViewController: UIViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         cell.selectionStyle = .none
         let thumbURL = photos[indexPath.row].thumbImageURL
-        
+        let createdAt = photos[indexPath.row].createdAt
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: URL(string: thumbURL),
                                    placeholder: UIImage(named: "loadingScreen"))
-        cell.dateLabel.text = dateFormatter.string(from: Date())
-//        if indexPath.row % 2 == 0 {
-//            cell.likeButton.imageView?.image = UIImage(named: "likeActive")
-//        } else {
-//            cell.likeButton.imageView?.image = UIImage(named: "likeInactive")
-//        }
+        guard let createdAt = photos[indexPath.row].createdAt
+        else {
+            cell.dateLabel.text = ""
+            return
+        }
+        cell.dateLabel.text = DateFormatterService.shared.imageDateFormatter.string(from: createdAt)
     }
     
     //MARK: - Functions
@@ -111,9 +105,13 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let photoURL = URL(string: photos[indexPath.row].largeImageURL) else { return }
         self.selectedIndexPath = indexPath
-        UIBlockingProgressHUD.show()
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
         KingfisherManager.shared.retrieveImage(with: photoURL, options: nil, progressBlock: nil, completionHandler: { result in
-            UIBlockingProgressHUD.dismiss()
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.dismiss()
+            }
             switch result {
             case .success(let result):
                 self.selectedImage = result.image

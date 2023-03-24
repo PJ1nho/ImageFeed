@@ -106,6 +106,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 DispatchQueue.main.async {
                     self?.oAuth2TokenStorage.token = token
                     self?.switchTabBar()
+                    UIBlockingProgressHUD.dismiss()
                 }
                 self?.fetchProfile(token: token)
             case .failure(let error):

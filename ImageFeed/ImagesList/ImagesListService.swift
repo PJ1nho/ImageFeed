@@ -33,12 +33,7 @@ final class ImagesListService {
                 print ("fail")
             case .success(let data):
                 print ("success")
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateStyle = .medium
-                dateFormatter.timeStyle = .none
-                dateFormatter.string(from: Date())
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-                let photos = data.map {return Photo(id: $0.id, size: .init(width: $0.width, height: $0.height), createdAt: dateFormatter.date(from: $0.createdAt), welcomeDescription: $0.description, thumbImageURL: $0.urls.thumb, largeImageURL: $0.urls.full, isLiked: $0.likedByUser) }
+                let photos = data.map {return Photo(id: $0.id, size: .init(width: $0.width, height: $0.height), createdAt: DateFormatterService.shared.responseDateFormatter.date(from: $0.createdAt), welcomeDescription: $0.description, thumbImageURL: $0.urls.thumb, largeImageURL: $0.urls.full, isLiked: $0.likedByUser) }
                 
                 DispatchQueue.main.async {
                     self?.photos.append(contentsOf: photos)
