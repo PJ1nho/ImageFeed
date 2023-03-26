@@ -17,9 +17,6 @@ extension URLSession {
             
             if let error = error {
                 completion(.failure(error))
-                DispatchQueue.main.async {
-                    UIBlockingProgressHUD.dismiss()
-                }
                 return
             }
             
@@ -27,23 +24,16 @@ extension URLSession {
                   let response = response as? HTTPURLResponse,
                   (200 ..< 299).contains(response.statusCode) else {
                 print("Error: HTTP request failed")
-                DispatchQueue.main.async {
-                    UIBlockingProgressHUD.dismiss()
-                }
+                completion(.failure(ImageFeedError.requestError))
                 return
             }
             
             let responseData = try? JSONDecoder().decode(T.self, from: data)
             guard let responseData = responseData else {
-                DispatchQueue.main.async {
-                    UIBlockingProgressHUD.dismiss()
-                }
+                completion(.failure(ImageFeedError.requestError))
                 return
             }
             completion(.success(responseData))
-            DispatchQueue.main.async {
-                UIBlockingProgressHUD.dismiss()
-            }
         })
         return task
     }

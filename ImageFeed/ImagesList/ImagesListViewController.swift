@@ -105,9 +105,7 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let photoURL = URL(string: photos[indexPath.row].largeImageURL) else { return }
         self.selectedIndexPath = indexPath
-        DispatchQueue.main.async {
-            UIBlockingProgressHUD.show()
-        }
+        UIBlockingProgressHUD.show()
         KingfisherManager.shared.retrieveImage(with: photoURL, options: nil, progressBlock: nil, completionHandler: { result in
             DispatchQueue.main.async {
                 UIBlockingProgressHUD.dismiss()

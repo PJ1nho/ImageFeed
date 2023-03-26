@@ -17,17 +17,17 @@ final class ProfileService {
     
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         
-        if lastToken == token  { return }
+        if lastToken == token  {
+            completion(.failure(ImageFeedError.requestError))
+            return
+        }
         task?.cancel()
         lastToken = token
         
         guard let url = URL(string: "https://api.unsplash.com/me") else {
             print("Error: cannot create URL")
+            completion(.failure(ImageFeedError.requestError))
             return
-        }
-        
-        DispatchQueue.main.async {
-            UIBlockingProgressHUD.show()
         }
         
         var request = URLRequest(url: url)
@@ -54,10 +54,6 @@ final class ProfileService {
                     bio: bio)
                 
                 self?.profile = profile
-                
-                DispatchQueue.main.async {
-                    UIBlockingProgressHUD.dismiss()
-                }
                 
                 self?.task = nil
                 self?.lastToken = nil

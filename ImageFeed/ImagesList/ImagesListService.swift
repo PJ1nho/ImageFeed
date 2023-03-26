@@ -52,7 +52,9 @@ final class ImagesListService {
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like?client_id=\(AccessKey)") else {
             print("Error: cannot create URL")
-            return }
+            completion(.failure(ImageFeedError.requestError))
+            return
+        }
         var request = URLRequest(url: url)
         
         if isLike == true {

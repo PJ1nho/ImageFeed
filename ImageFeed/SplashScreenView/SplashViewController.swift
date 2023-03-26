@@ -48,14 +48,20 @@ final class SplashViewController: UIViewController {
     }
     
     func fetchProfile(token: String) {
+        UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
             switch result {
             case .success(let profile):
                 print("/n MYLOG: \(profile)")
-                ProfileImageService.shared.fetchProfileImageURL(username: profile.loginName.replacingOccurrences(of: "@", with: "")) { _ in }
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.loginName.replacingOccurrences(of: "@", with: "")) { _ in
+                    DispatchQueue.main.async {
+                        UIBlockingProgressHUD.dismiss()
+                    }
+                }
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     self.switchTabBar()
+                    UIBlockingProgressHUD.dismiss()
                 }
             case .failure(let error):
                 print("/n MYLOG: \(error)")

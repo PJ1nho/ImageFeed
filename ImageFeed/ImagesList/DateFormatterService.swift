@@ -11,18 +11,18 @@ class DateFormatterService {
     static let shared = DateFormatterService()
     
     private init() { }
-    var responseDateFormatter: DateFormatter {
+    lazy var responseDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .none
         dateFormatter.string(from: Date())
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         return dateFormatter
-    }
+    }()
     
-    var imageDateFormatter: DateFormatter {
+    lazy var imageDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMMM yyyy"
         return formatter
-    }
+    }()
 }
