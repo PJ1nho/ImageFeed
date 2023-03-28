@@ -74,9 +74,10 @@ final class SplashViewController: UIViewController {
     }
     
     func showAlert() {
+        let vc = getTopViewController()
         let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        vc.present(alert, animated: true, completion: nil)
     }
     
     private func configureMainImageView() {
@@ -97,6 +98,17 @@ final class SplashViewController: UIViewController {
         configureMainImageView()
         configureConstraints()
     }
+    
+    private func getTopViewController() -> UIViewController {
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        if var topController = keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            return topController
+        }
+        return self
+    }
 }
 
 // MARK: - AuthViewControllerDelegate
@@ -111,10 +123,11 @@ extension SplashViewController: AuthViewControllerDelegate {
                 print("/n MYLOG: \(token)")
                 DispatchQueue.main.async {
                     self?.oAuth2TokenStorage.token = token
-                    self?.switchTabBar()
+                    //                    self?.switchTabBar()
                     UIBlockingProgressHUD.dismiss()
+                    self?.fetchProfile(token: token)
                 }
-                self?.fetchProfile(token: token)
+                
             case .failure(let error):
                 print("/n MYLOG: \(error)")
                 self?.showAlert()
@@ -124,5 +137,5 @@ extension SplashViewController: AuthViewControllerDelegate {
             }
         }
     }
-    
 }
+

@@ -44,8 +44,8 @@ final class ProfileService {
                     lastName: data.lastName,
                     bio: data.bio)
                 
-                let name = profileResults.firstName + " " + profileResults.lastName
-                let loginName = "@" + profileResults.username
+                let name = (profileResults.firstName ?? "") + " " + (profileResults.lastName ?? "")
+                let loginName = "@" + (profileResults.username ?? "")
                 let bio = profileResults.bio ?? ""
                 
                 let profile = Profile(
