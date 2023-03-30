@@ -15,7 +15,6 @@ class ImagesListViewController: UIViewController {
     var imageListCell = ImagesListCell()
     
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    private var photoNames: [String] = Array(0..<20).map{ "\($0)" }
     private var photos = [Photo]()
     private var imagesListObserver: NSObjectProtocol?
     private var selectedImage: UIImage?
