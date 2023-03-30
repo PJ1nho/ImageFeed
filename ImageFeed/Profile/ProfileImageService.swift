@@ -20,19 +20,25 @@ final class ProfileImageService {
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         
-        if lastUsername == username  { return }
+        if lastUsername == username  {
+            completion(.failure(ImageFeedError.requestError))
+            return
+        }
         task?.cancel()
         lastUsername = username
         
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             print("Error: cannot create URL")
+            completion(.failure(ImageFeedError.requestError))
             return
         }
         
+
         DispatchQueue.main.async {
             UIBlockingProgressHUD.show()
         }
         
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -50,10 +56,12 @@ final class ProfileImageService {
                         object: self,
                         userInfo: ["URL": data.small])
                 
+
                 DispatchQueue.main.async {
                     UIBlockingProgressHUD.dismiss()
                 }
                 
+
                 self?.task = nil
                 self?.lastUsername = nil
             }

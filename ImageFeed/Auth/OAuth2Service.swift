@@ -7,12 +7,16 @@ final class OAuth2Service {
     
     func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         
-        if lastCode == code { return }
+        if lastCode == code {
+            completion(.failure(ImageFeedError.requestError))
+            return
+        }
         task?.cancel()
         lastCode = code
         
         guard let url = URL(string: "https://unsplash.com/oauth/token") else {
             print("Error: cannot create URL")
+            completion(.failure(ImageFeedError.requestError))
             return
         }
         
@@ -25,13 +29,16 @@ final class OAuth2Service {
         
         guard let jsonData = try? JSONEncoder().encode(requestData) else {
             print("Error: Trying to convert model to JSON data")
+            completion(.failure(ImageFeedError.requestError))
             return
         }
         
+
         DispatchQueue.main.async {
             UIBlockingProgressHUD.show()
         }
         
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -45,11 +52,12 @@ final class OAuth2Service {
             case .success(let data):
                 let token = data.accessToken
                 completion(.success(token))
-                
+     
                 DispatchQueue.main.async {
                     UIBlockingProgressHUD.dismiss()
                 }
         
+
                 self?.task = nil
                 }
             }

@@ -20,6 +20,10 @@ class OAuth2TokenStorage: OAuth2TokenStorageProtocol {
     private enum Keys: String {
         case token
     }
+    
+    func clearToken() {
+        token = ""
+    }
 }
 
 

@@ -69,7 +69,9 @@ extension WebViewViewController: WKNavigationDelegate {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
-            ProgressHUD.show()
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.show()
+            }
         } else {
             decisionHandler(.allow)
         }
@@ -86,6 +88,15 @@ extension WebViewViewController: WKNavigationDelegate {
             return codeItem.value
         } else {
             return nil
+        }
+    }
+    
+    static func clear() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
         }
     }
 }
