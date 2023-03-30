@@ -33,6 +33,12 @@ final class ProfileImageService {
             return
         }
         
+
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
+        
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -50,6 +56,12 @@ final class ProfileImageService {
                         object: self,
                         userInfo: ["URL": data.small])
                 
+
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
+                
+
                 self?.task = nil
                 self?.lastUsername = nil
             }

@@ -29,6 +29,12 @@ final class ProfileService {
             completion(.failure(ImageFeedError.requestError))
             return
         }
+
+
+        DispatchQueue.main.async {
+            UIBlockingProgressHUD.show()
+        }
+
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -55,6 +61,12 @@ final class ProfileService {
                 
                 self?.profile = profile
                 
+
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                }
+                
+
                 self?.task = nil
                 self?.lastToken = nil
                 completion(.success(profile))
