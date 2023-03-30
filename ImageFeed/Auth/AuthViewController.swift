@@ -13,11 +13,18 @@ final class AuthViewController: UIViewController {
         super.viewDidLoad()
     }
     
-// MARK: - Navigation
+    // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == segueWebViewIdentifier,
-           let vc = segue.destination as? WebViewViewController {
-            vc.delegate = self
+        if segue.identifier == segueWebViewIdentifier {
+            guard
+                let webViewViewController = segue.destination as? WebViewViewController
+            else {fatalError()}
+            let webViewPresenter = WebViewPresenter()
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
+            webViewViewController.delegate = self
+        } else {
+            super.prepare(for: segue, sender: sender)
         }
     }
 }
