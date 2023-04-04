@@ -1,42 +1,41 @@
 import UIKit
 import Kingfisher
 
+public protocol ProfileViewControllerProtocol: AnyObject {
+    func updateAvatar(url: URL, processor: RoundCornerImageProcessor)
+    func updateProfileDetails(name: String?, loginName: String?, bio: String?)
+}
+
 final class ProfileViewController: UIViewController {
     
-    let profileImageView = UIImageView()
-    let nameLabel = UILabel()
-    let tagName = UILabel()
-    let userInformation = UILabel()
-    var logOutButton = UIButton()
-    private let profileService = ProfileService.shared
+    private let profileImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private let tagName = UILabel()
+    private let userInformation = UILabel()
+    private var logOutButton = UIButton()
+    var presenter: ProfilePresenterProtocol?
     private var profileImageServiceObserver: NSObjectProtocol?
+    
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        updateProfileDetails()
-        
+        presenter?.view = self
+        presenter?.getProfileDetails()
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(forName: ProfileImageService.DidChangeNotification,
                          object: nil,
                          queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                self.updateAvatar()
+                self.presenter?.getProfileImageURL()
             }
-        updateAvatar()
+        presenter?.getProfileImageURL()
     }
     
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        let processor = RoundCornerImageProcessor(cornerRadius: 50)
-        self.profileImageView.kf.setImage(with: url,
-                                          options: [.processor(processor)])
-    }
-    
+    // MARK: - SetupUI
     private func setupUI() {
         self.view.backgroundColor = UIColor(red: 26/255.0, green: 27/255.0, blue: 34/255.0, alpha: 1)
         configureImageView()
@@ -89,6 +88,7 @@ final class ProfileViewController: UIViewController {
         ])
         
         logOutButton.addTarget(self, action: #selector(self.logOutClicked), for: .touchUpInside)
+        logOutButton.accessibilityIdentifier = "logOutButton"
     }
     
     private func configureConstraints() {
@@ -109,15 +109,13 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func updateProfileDetails() {
-        nameLabel.text = profileService.profile?.name
-        tagName.text = profileService.profile?.loginName
-        userInformation.text = profileService.profile?.bio
-    }
+    // MARK: - Actions
     
     @objc func logOutClicked() {
         showLogOutAlert()
     }
+    
+    // MARK: - Functions
     
     private func showLogOutAlert() {
         let alert = UIAlertController(title: "Пока-пока", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
@@ -133,5 +131,22 @@ final class ProfileViewController: UIViewController {
             return
         }))
         self.present(alert, animated: true)
+    }
+}
+
+// MARK: - ProfileViewControllerProtocol
+
+extension ProfileViewController: ProfileViewControllerProtocol {
+    func updateProfileDetails(name: String?, loginName: String?, bio: String?) {
+        DispatchQueue.main.async {
+            self.nameLabel.text = name
+            self.tagName.text = loginName
+            self.userInformation.text = bio
+        }
+    }
+    
+    func updateAvatar(url: URL, processor: RoundCornerImageProcessor) {
+        self.profileImageView.kf.setImage(with: url,
+                                          options: [.processor(processor)])
     }
 }

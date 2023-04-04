@@ -57,6 +57,11 @@ final class ImagesListService {
         }
         var request = URLRequest(url: url)
         
+        if let photoIndex = photos.firstIndex { $0.id == photoId } {
+            photos[photoIndex].isLiked = isLike
+        }
+        
+        
         if isLike == true {
             request.httpMethod = "POST"
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

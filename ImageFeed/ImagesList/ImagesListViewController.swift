@@ -8,6 +8,10 @@
 import UIKit
 import Kingfisher
 
+public protocol ImagesListViewControllerProtocol: AnyObject {
+    
+}
+
 class ImagesListViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
@@ -20,8 +24,9 @@ class ImagesListViewController: UIViewController {
     private var selectedImage: UIImage?
     private var selectedIndexPath: IndexPath?
     weak var delegate: ImagesListCellDelegate?
+    var presenter: ImageListPresenterProtocol?
 
-    private let imagesListService = ImagesListService()
+
     
     //MARK: - LifeCycle
     
@@ -36,7 +41,7 @@ class ImagesListViewController: UIViewController {
                 guard let self = self else { return }
                 self.updateTableViewAnimated()
             }
-        imagesListService.fetchPhotosNextPage()
+        presenter?.fetchNextPage()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -69,9 +74,10 @@ class ImagesListViewController: UIViewController {
     //MARK: - Functions
     
     func updateTableViewAnimated() {
+        let newPhotos = presenter?.getPhotos() ?? []
         let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        photos = imagesListService.photos
+        let newCount = newPhotos.count
+        photos = newPhotos
         if oldCount != newCount {
             tableView.performBatchUpdates {
                 let indexPaths = (oldCount..<newCount).map { i in
@@ -150,7 +156,7 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == photos.count {
-            imagesListService.fetchPhotosNextPage()
+            presenter?.fetchNextPage()
         }
     }
 }
@@ -164,13 +170,13 @@ extension ImagesListViewController: ImagesListCellDelegate {
         DispatchQueue.main.async {
             UIBlockingProgressHUD.show()
         }
-        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+        presenter?.changeLike(photoId: photo.id, isLiked: !photo.isLiked) { [weak self] result in
             switch result {
             case .success(let isLiked):
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     UIBlockingProgressHUD.dismiss()
-                    self.photos = self.imagesListService.photos
+                    self.photos = self.presenter?.getPhotos() ?? []
                     cell.setIsLiked(isLiked)
                 }
             case .failure:
