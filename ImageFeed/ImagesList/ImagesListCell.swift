@@ -28,13 +28,14 @@ final class ImagesListCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         cellImage.kf.cancelDownloadTask()
+        likeButton.setImage(UIImage(named: "likeInactive"), for: .normal)
     }
     
     func setIsLiked(_ isLiked: Bool) {
         if isLiked {
-            likeButton.imageView?.image = UIImage(named: "likeActive")
+            likeButton.setImage(UIImage(named: "likeActive"), for: .normal)
         } else {
-            likeButton.imageView?.image = UIImage(named: "likeInactive")
+            likeButton.setImage(UIImage(named: "likeInactive"), for: .normal)
         }
     }
 }
